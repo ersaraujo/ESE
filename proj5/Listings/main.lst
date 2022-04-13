@@ -1,0 +1,126 @@
+C51 COMPILER V9.60.0.0   MAIN                                                              04/13/2022 20:43:33 PAGE 1   
+
+
+C51 COMPILER V9.60.0.0, COMPILATION OF MODULE MAIN
+OBJECT MODULE PLACED IN .\Objects\main.obj
+COMPILER INVOKED BY: C:\Keil_v5\C51\BIN\C51.EXE main.c OPTIMIZE(8,SPEED) BROWSE DEBUG OBJECTEXTEND PRINT(.\Listings\main
+                    -.lst) TABS(2) OBJECT(.\Objects\main.obj)
+
+line level    source
+
+   1          #include <REG51F.H>
+   2          
+   3          char txBuffer[16];
+   4          char rxBuffer[16];
+   5          static int in = 0;
+   6          static int out = 0;
+   7          static int indexTx = 0;
+   8          
+   9          bit recebeuString = 0;
+  10          
+  11          void configSerial(){
+  12   1        SCON  = 0x50;   // Seleciona o Serial no modo 1
+  13   1        TMOD  = 0x20;   // Define modo1 do Timer         
+  14   1        TH1   = 0xF0;   // Define boudrate
+  15   1        TR1   = 1;      // Inicia o Timer1 
+  16   1        IE    = 0x90;   // Ativa interrupção
+  17   1      }
+  18            
+  19          // Funcao para escrever na UART
+  20          void writeSerial(unsigned char letra){
+  21   1        SBUF = letra;     
+  22   1        while(!TI);           // Aguarda transmissão
+  23   1        TI = 0;               // Sinaliza final da transmissão
+  24   1        out++;
+  25   1      }
+  26            
+  27          void intSerial (void) interrupt 4{
+  28   1        
+  29   1        char inputSerial;
+  30   1        inputSerial = SBUF;
+  31   1        
+  32   1        IE = 0x00;  
+  33   1        
+  34   1        if(in == out || (!(in+1 < out))){ // Verifica se é possivel escrever no buffer
+  35   2          rxBuffer[in] = inputSerial;
+  36   2          if(inputSerial == '$'){
+  37   3            recebeuString = 1;
+  38   3          }
+  39   2          if(in < 15){  
+  40   3            in++;
+  41   3          }else{
+  42   3            in = 0;
+  43   3          }
+  44   2        }
+  45   1        
+  46   1        RI = 0;                           // Sinaliza final de recepção
+  47   1        IE = 0x90;                        // Ativa interrupçao novamente
+  48   1      
+  49   1      }
+  50          
+  51          void sendChar(char c){
+  52   1        if(indexTx < 16){
+  53   2          txBuffer[indexTx] = c;
+  54   2          writeSerial(txBuffer[out]);
+C51 COMPILER V9.60.0.0   MAIN                                                              04/13/2022 20:43:33 PAGE 2   
+
+  55   2          indexTx++;
+  56   2        }
+  57   1      }
+  58          
+  59          void resetVar(){
+  60   1        out = 0;
+  61   1        in = 0;
+  62   1        indexTx = 0;
+  63   1        recebeuString = 0;
+  64   1      }
+  65          
+  66          void sendString(char *s){
+  67   1        int i = 0;
+  68   1        IE = 0x00;
+  69   1        while(s[i] != '$'){
+  70   2          sendChar(s[i]);
+  71   2          i++;
+  72   2        }
+  73   1        IE = 0x90;
+  74   1        resetVar();
+  75   1      }
+  76          
+  77          char receiveChar(int i){  
+  78   1        return rxBuffer[i];
+  79   1      }
+  80          
+  81          void receiveString(char *s){
+  82   1        int i = 0;
+  83   1        while(receiveChar(i) != '$'){
+  84   2          s[i] = receiveChar(i);
+  85   2          i++;
+  86   2        }
+  87   1        s[i] = receiveChar(i);
+  88   1      }
+  89          
+  90          int main()
+  91          {
+  92   1        configSerial();
+  93   1        while(1){
+  94   2          char string[16];
+  95   2          if(recebeuString){
+  96   3            receiveString(&string);
+  97   3            sendString(&string);
+  98   3          }
+  99   2        }
+ 100   1      }
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =    352    ----
+   CONSTANT SIZE    =   ----    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =     38      22
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =      1    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)
