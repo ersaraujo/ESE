@@ -1,0 +1,124 @@
+C51 COMPILER V9.60.0.0   MAIN                                                              03/18/2022 21:34:37 PAGE 1   
+
+
+C51 COMPILER V9.60.0.0, COMPILATION OF MODULE MAIN
+OBJECT MODULE PLACED IN .\Objects\main.obj
+COMPILER INVOKED BY: C:\Keil_v5\C51\BIN\C51.EXE main.c OPTIMIZE(8,SPEED) BROWSE DEBUG OBJECTEXTEND PRINT(.\Listings\main
+                    -.lst) TABS(2) OBJECT(.\Objects\main.obj)
+
+line level    source
+
+   1          #include "reg51.h"
+   2          
+   3          char txBuffer[16];
+   4          static int in = 0;
+   5          char rxBuffer[16];
+   6          static int out = 0;
+   7          
+   8          static int indexTx =0;
+   9          
+  10          bit recebeuString = 0;
+  11          
+  12          void configSerial(){
+  13   1        SCON  = 0x50;   // Seleciona o Serial no modo 1
+  14   1        TMOD  = 0x20;   // Define modo1 do Timer         
+  15   1        TH1   = 0xF0;   // Define boudrate
+  16   1        TR1   = 1;      // Inicia o Timer1 
+  17   1        IE    = 0x90;   // Ativa interrupção
+  18   1      }
+  19            
+  20          // Funcao para escrever na UART
+  21          void writeSerial(unsigned char letra){
+  22   1        SBUF = letra;     
+  23   1        while(!TI);           // Aguarda transmissão
+  24   1        TI = 0;               // Sinaliza final da transmissão
+  25   1        out++;
+  26   1      }
+  27            
+  28          void intSerial (void) interrupt 4{  
+  29   1        unsigned char inputSerial;
+  30   1        inputSerial = SBUF;
+  31   1        IE = 0x00;            
+  32   1        if(!(in+1)%16 == out){
+  33   2          rxBuffer[in] = inputSerial;
+  34   2          if(inputSerial == '$'){
+  35   3            recebeuString = 1;
+  36   3          }
+  37   2          if(in < 14){
+  38   3            in++;
+  39   3          }else{
+  40   3            in = 0;
+  41   3          }
+  42   2        }
+  43   1        
+  44   1        RI = 0;                           // Sinaliza final de recepção
+  45   1        IE = 0x90;                        // Ativa interrupçao novamente
+  46   1      }
+  47          
+  48          void sendChar(char c){
+  49   1        if(indexTx < 16){
+  50   2          txBuffer[indexTx] = c;
+  51   2          TI = 1;
+  52   2          writeSerial(txBuffer[indexTx]);
+  53   2          indexTx++;
+  54   2        } 
+C51 COMPILER V9.60.0.0   MAIN                                                              03/18/2022 21:34:37 PAGE 2   
+
+  55   1      }
+  56          
+  57          void sendString(char *s){
+  58   1        int i = 0;
+  59   1        while(s[i] != '$'){
+  60   2          sendChar(s[i]);
+  61   2          i++;
+  62   2        }
+  63   1        out = 0;
+  64   1      }
+  65          
+  66          char rxBufferVazio(){
+  67   1        char vazio;
+  68   1        if(in == out){
+  69   2          vazio = 1;
+  70   2        }else{
+  71   2          vazio = 0;
+  72   2        }
+  73   1        return vazio;
+  74   1      }
+  75          
+  76          char receiveChar(int i){  
+  77   1        return rxBuffer[i];
+  78   1      }
+  79          
+  80          void receiveString(char *s){
+  81   1        int i = 0;
+  82   1        while(rxBuffer[i] != '$'){
+  83   2          s[i] = receiveChar(i);
+  84   2          i++;
+  85   2        }
+  86   1      }
+  87          
+  88          int main()
+  89          {
+  90   1        configSerial();
+  91   1        while(1){
+  92   2          char string[16];
+  93   2          if(recebeuString){
+  94   3            receiveString(string);
+  95   3            sendString(rxBuffer);
+  96   3          }
+  97   2        }
+  98   1      }
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =    317    ----
+   CONSTANT SIZE    =   ----    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =     38      22
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =      1    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)

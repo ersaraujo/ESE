@@ -1,0 +1,36 @@
+C51 COMPILER V9.60.0.0   PROJETO2                                                          02/07/2022 13:49:02 PAGE 1   
+
+
+C51 COMPILER V9.60.0.0, COMPILATION OF MODULE PROJETO2
+OBJECT MODULE PLACED IN .\Objects\projeto2.obj
+COMPILER INVOKED BY: C:\Keil_v5\C51\BIN\C51.EXE projeto2.c OPTIMIZE(8,SPEED) BROWSE DEBUG OBJECTEXTEND PRINT(.\Listings\
+                    -projeto2.lst) TABS(2) OBJECT(.\Objects\projeto2.obj)
+
+line level    source
+
+   1          #include <REG51F.H>
+   2          
+   3          int i = 3;
+   4          
+   5          char data c = 2;
+   6          char xdata d = 3;
+   7          
+   8          
+   9          void main()
+  10          {
+  11   1        while(1);
+  12   1      }
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =      2    ----
+   CONSTANT SIZE    =   ----    ----
+   XDATA SIZE       =      1    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =      3    ----
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)
