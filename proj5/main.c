@@ -1,7 +1,7 @@
 #include <REG51F.H>
 
 char txBuffer[16];
-char rxBuffer[16];
+char rxBuffer[16];		
 static int in = 0;
 static int out = 0;
 static int indexTx = 0;
@@ -29,15 +29,15 @@ void intSerial (void) interrupt 4{
 	char inputSerial;
 	inputSerial = SBUF;
 	
-	IE = 0x00;	
+	IE = 0x00;												// Desativa a interrupção
 	
 	if(in == out || (!(in+1 < out))){	// Verifica se é possivel escrever no buffer
-		rxBuffer[in] = inputSerial;
-		if(inputSerial == '$'){
+		rxBuffer[in] = inputSerial;			// Salva a entrada no rxBuffer
+		if(inputSerial == '$'){					// Verifica se é o fim da string
 			recebeuString = 1;
 		}
-		if(in < 15){	
-			in++;
+		if(in < 15){										// Verifica o espaço no rxBuffer
+			in++;														
 		}else{
 			in = 0;
 		}
@@ -47,38 +47,38 @@ void intSerial (void) interrupt 4{
 	IE = 0x90;												// Ativa interrupçao novamente
 
 }
-
+/* Mudar verificação para ver se in < out, caso seja, uma nova escrita foi feita */
 void sendChar(char c){
-	if(indexTx < 16){
-		txBuffer[indexTx] = c;
-		writeSerial(txBuffer[out]);
+	if(indexTx < 16){										// Verifica a escrita na UART
+		txBuffer[indexTx] = c;						// Coloca c em txBuffer
+		writeSerial(txBuffer[out]);				// Chama rotina de print
 		indexTx++;
 	}
 }
 
-void resetVar(){
+void resetVar(){			// Função que reseta variaveis utilizadas depois da rotina de print
 	out = 0;
 	in = 0;
 	indexTx = 0;
 	recebeuString = 0;
 }
 
-void sendString(char *s){
-	int i = 0;
-	IE = 0x00;
-	while(s[i] != '$'){
-		sendChar(s[i]);
+void sendString(char *s){		// Envia string para ser printada
+	int i = 0;		
+	IE = 0x00;								// Desativa a interrupção
+	while(s[i] != '$'){				// Verifica se é o final da string
+		sendChar(s[i]);					// Chama rotina para printar o caractere
 		i++;
 	}
-	IE = 0x90;
-	resetVar();
+	IE = 0x90;								// Ativa a interrupção no final do print da string
+	resetVar();								// Rotina para reset das variaveis
 }
 
-char receiveChar(int i){	
+char receiveChar(int i){		// Salva caractere em rxBuffer
 	return rxBuffer[i];
 }
 
-void receiveString(char *s){
+void receiveString(char *s){ 
 	int i = 0;
 	while(receiveChar(i) != '$'){
 		s[i] = receiveChar(i);
