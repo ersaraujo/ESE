@@ -1,4 +1,4 @@
-C51 COMPILER V9.60.0.0   MAIN                                                              04/17/2022 17:59:35 PAGE 1   
+C51 COMPILER V9.60.0.0   MAIN                                                              04/17/2022 17:57:37 PAGE 1   
 
 
 C51 COMPILER V9.60.0.0, COMPILATION OF MODULE MAIN
@@ -62,7 +62,7 @@ line level    source
   52   1        if(indexTx < 16){                   // Verifica a escrita na UART
   53   2          txBuffer[indexTx] = c;            // Coloca c em txBuffer
   54   2          writeSerial(txBuffer[out]);       // Chama rotina de print
-C51 COMPILER V9.60.0.0   MAIN                                                              04/17/2022 17:59:35 PAGE 2   
+C51 COMPILER V9.60.0.0   MAIN                                                              04/17/2022 17:57:37 PAGE 2   
 
   55   2          indexTx++;
   56   2        }
