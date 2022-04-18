@@ -1,4 +1,4 @@
-BL51 BANKED LINKER/LOCATER V6.22.2.0                                                    04/18/2022  14:27:23  PAGE 1
+BL51 BANKED LINKER/LOCATER V6.22.2.0                                                    04/18/2022  14:33:47  PAGE 1
 
 
 BL51 BANKED LINKER/LOCATER V6.22.2.0, INVOKED BY:
@@ -36,11 +36,11 @@ LINK MAP OF MODULE:  .\Objects\proj8 (?C_STARTUP)
             CODE    0800H     008CH     UNIT         ?C_C51STARTUP
             CODE    088CH     0022H     UNIT         ?PR?INTERRUPTCOMPARE?MAIN
             CODE    08AEH     000DH     UNIT         ?PR?SETUPCTIMER?MAIN
-            CODE    08BBH     000CH     UNIT         ?C_INITSEG
-            CODE    08C7H     000BH     UNIT         ?PR?MAIN?MAIN
-            CODE    08D2H     000AH     UNIT         ?PR?INITIALIZE?MAIN
-            CODE    08DCH     000AH     UNIT         ?PR?INTSERIAL?MAIN
-            CODE    08E6H     0004H     UNIT         ?PR?SETUPINTERRUPT?MAIN
+            CODE    08BBH     000CH     UNIT         ?PR?INTSERIAL?MAIN
+            CODE    08C7H     000CH     UNIT         ?C_INITSEG
+            CODE    08D3H     000BH     UNIT         ?PR?MAIN?MAIN
+            CODE    08DEH     000AH     UNIT         ?PR?INITIALIZE?MAIN
+            CODE    08E8H     0004H     UNIT         ?PR?SETUPINTERRUPT?MAIN
 
 
 
@@ -59,7 +59,7 @@ SEGMENT
   +--> ?PR?SETUPINTERRUPT?MAIN
   +--> ?PR?SETUPCTIMER?MAIN
 
-BL51 BANKED LINKER/LOCATER V6.22.2.0                                                  04/18/2022  14:27:23  PAGE 2
+BL51 BANKED LINKER/LOCATER V6.22.2.0                                                  04/18/2022  14:33:47  PAGE 2
 
 
 
@@ -106,71 +106,73 @@ SYMBOL TABLE OF MODULE:  .\Objects\proj8 (?C_STARTUP)
   -------         MODULE        MAIN
   C:0000H         SYMBOL        _ICE_DUMMY_
   D:0008H         PUBLIC        valueSerial
-  C:08E6H         PUBLIC        setupInterrupt
+  C:08E8H         PUBLIC        setupInterrupt
   D:00A8H         PUBLIC        IEN0
   D:009AH         PUBLIC        IEN2
-  C:08C7H         PUBLIC        main
-  C:08DCH         PUBLIC        intSerial
+  C:08D3H         PUBLIC        main
+  C:08BBH         PUBLIC        intSerial
   D:0089H         PUBLIC        TMOD
-  C:08D2H         PUBLIC        initialize
+  C:08DEH         PUBLIC        initialize
   C:088CH         PUBLIC        interruptCompare
   D:00D2H         PUBLIC        CM0
   D:00DFH         PUBLIC        CTRELH
   D:00DEH         PUBLIC        CTRELL
+  B:0098H.0       PUBLIC        RI0
   D:0009H         PUBLIC        luTable
+BL51 BANKED LINKER/LOCATER V6.22.2.0                                                  04/18/2022  14:33:47  PAGE 3
+
+
   D:0099H         PUBLIC        S0BUF
-BL51 BANKED LINKER/LOCATER V6.22.2.0                                                  04/18/2022  14:27:23  PAGE 3
-
-
   D:0098H         PUBLIC        S0CON
   D:00F7H         PUBLIC        CMSEL
   D:00E1H         PUBLIC        CTCON
   C:08AEH         PUBLIC        setupCTimer
   -------         PROC          INITIALIZE
-  C:08D2H         LINE#         11
-  C:08D2H         LINE#         12
-  C:08D5H         LINE#         13
-  C:08D8H         LINE#         14
-  C:08DBH         LINE#         15
+  C:08DEH         LINE#         11
+  C:08DEH         LINE#         12
+  C:08E1H         LINE#         13
+  C:08E4H         LINE#         14
+  C:08E7H         LINE#         15
   -------         ENDPROC       INITIALIZE
   -------         PROC          INTSERIAL
-  C:08DCH         LINE#         17
-  C:08DCH         LINE#         18
-  C:08DFH         LINE#         19
-  C:08E2H         LINE#         20
-  C:08E5H         LINE#         21
+  C:08BBH         LINE#         17
+  C:08BBH         LINE#         18
+  C:08BEH         LINE#         19
+  C:08C1H         LINE#         20
+  C:08C3H         LINE#         21
+  C:08C6H         LINE#         23
   -------         ENDPROC       INTSERIAL
   -------         PROC          SETUPINTERRUPT
-  C:08E6H         LINE#         23
-  C:08E6H         LINE#         24
-  C:08E9H         LINE#         25
+  C:08E8H         LINE#         25
+  C:08E8H         LINE#         26
+  C:08EBH         LINE#         27
   -------         ENDPROC       SETUPINTERRUPT
   -------         PROC          SETUPCTIMER
-  C:08AEH         LINE#         27
-  C:08AEH         LINE#         28
-  C:08B1H         LINE#         29
-  C:08B4H         LINE#         30
-  C:08B7H         LINE#         31
-  C:08BAH         LINE#         32
+  C:08AEH         LINE#         29
+  C:08AEH         LINE#         30
+  C:08B1H         LINE#         31
+  C:08B4H         LINE#         32
+  C:08B7H         LINE#         33
+  C:08BAH         LINE#         34
   -------         ENDPROC       SETUPCTIMER
   -------         PROC          INTERRUPTCOMPARE
-  C:088CH         LINE#         34
-  C:0897H         LINE#         35
-  C:08A5H         LINE#         36
+  C:088CH         LINE#         36
+  C:0897H         LINE#         37
+  C:08A5H         LINE#         38
   -------         ENDPROC       INTERRUPTCOMPARE
   -------         PROC          MAIN
-  C:08C7H         LINE#         39
-  C:08C7H         LINE#         41
-  C:08CAH         LINE#         42
-  C:08CDH         LINE#         43
-  C:08D0H         LINE#         45
-  C:08D0H         LINE#         46
+  C:08D3H         LINE#         41
+  C:08D3H         LINE#         43
+  C:08D6H         LINE#         44
+  C:08D9H         LINE#         45
+  C:08DCH         LINE#         47
+  C:08DCH         LINE#         48
   -------         ENDPROC       MAIN
   -------         ENDMOD        MAIN
 
 ******************************************************************************
-* RESTRICTED VERSION WITH 0800H BYTE CODE SIZE LIMIT; USED: 0072H BYTE ( 5%) *
+* RESTRICTED VERSION WITH 0800H BYTE CODE SIZE LIMIT; USED: 0074H BYTE ( 5%) *
 ******************************************************************************
 
-Program Size: data=19.0 xdata=0 code=243
+Program Size: data=19.0 xdata=0 code=245
 LINK/LOCATE RUN COMPLETE.  0 WARNING(S),  0 ERROR(S)

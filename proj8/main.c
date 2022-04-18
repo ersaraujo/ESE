@@ -17,7 +17,9 @@ void initialize(){	// Using UART 1
 void intSerial (void) interrupt 4{
 	IEN0 = 0x00;
 	valueSerial = S0BUF;
+	RI0 = 0;
 	IEN0 = 0x98;
+	
 }
 
 void setupInterrupt(){
