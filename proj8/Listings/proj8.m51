@@ -1,4 +1,4 @@
-BL51 BANKED LINKER/LOCATER V6.22.2.0                                                    04/18/2022  14:33:47  PAGE 1
+BL51 BANKED LINKER/LOCATER V6.22.2.0                                                    05/02/2022  15:15:38  PAGE 1
 
 
 BL51 BANKED LINKER/LOCATER V6.22.2.0, INVOKED BY:
@@ -23,24 +23,20 @@ LINK MAP OF MODULE:  .\Objects\proj8 (?C_STARTUP)
 
             * * * * * * *   D A T A   M E M O R Y   * * * * * * *
             REG     0000H     0008H     ABSOLUTE     "REG BANK 0"
-            DATA    0008H     000AH     UNIT         ?DT?MAIN
-            IDATA   0012H     0001H     UNIT         ?STACK
+            DATA    0008H     000BH     UNIT         ?DT?MAIN
+            IDATA   0013H     0001H     UNIT         ?STACK
 
             * * * * * * *   C O D E   M E M O R Y   * * * * * * *
             CODE    0000H     0003H     ABSOLUTE     
                     0003H     0020H                  *** GAP ***
             CODE    0023H     0003H     ABSOLUTE     
-                    0026H     0075H                  *** GAP ***
-            CODE    009BH     0003H     ABSOLUTE     
-                    009EH     0762H                  *** GAP ***
+                    0026H     07DAH                  *** GAP ***
             CODE    0800H     008CH     UNIT         ?C_C51STARTUP
-            CODE    088CH     0022H     UNIT         ?PR?INTERRUPTCOMPARE?MAIN
-            CODE    08AEH     000DH     UNIT         ?PR?SETUPCTIMER?MAIN
-            CODE    08BBH     000CH     UNIT         ?PR?INTSERIAL?MAIN
-            CODE    08C7H     000CH     UNIT         ?C_INITSEG
-            CODE    08D3H     000BH     UNIT         ?PR?MAIN?MAIN
-            CODE    08DEH     000AH     UNIT         ?PR?INITIALIZE?MAIN
-            CODE    08E8H     0004H     UNIT         ?PR?SETUPINTERRUPT?MAIN
+            CODE    088CH     0038H     UNIT         ?PR?INITIALIZECTIMER?MAIN
+            CODE    08C4H     002CH     UNIT         ?PR?INTERRUPTSERIAL?MAIN
+            CODE    08F0H     0016H     UNIT         ?PR?INITIALIZESERIAL?MAIN
+            CODE    0906H     000DH     UNIT         ?C_INITSEG
+            CODE    0913H     000AH     UNIT         ?PR?MAIN?MAIN
 
 
 
@@ -55,23 +51,22 @@ SEGMENT
   +--> ?C_INITSEG
 
 ?PR?MAIN?MAIN
-  +--> ?PR?INITIALIZE?MAIN
-  +--> ?PR?SETUPINTERRUPT?MAIN
-  +--> ?PR?SETUPCTIMER?MAIN
-
-BL51 BANKED LINKER/LOCATER V6.22.2.0                                                  04/18/2022  14:33:47  PAGE 2
-
+  +--> ?PR?INITIALIZESERIAL?MAIN
+  +--> ?PR?INITIALIZECTIMER?MAIN
 
 
 
 SYMBOL TABLE OF MODULE:  .\Objects\proj8 (?C_STARTUP)
 
   VALUE           TYPE          NAME
+BL51 BANKED LINKER/LOCATER V6.22.2.0                                                  05/02/2022  15:15:38  PAGE 2
+
+
   ----------------------------------
 
   -------         MODULE        ?C_STARTUP
   C:0800H         SEGMENT       ?C_C51STARTUP
-  I:0012H         SEGMENT       ?STACK
+  I:0013H         SEGMENT       ?STACK
   C:0000H         PUBLIC        ?C_STARTUP
   D:00E0H         SYMBOL        ACC
   D:00F0H         SYMBOL        B
@@ -105,74 +100,89 @@ SYMBOL TABLE OF MODULE:  .\Objects\proj8 (?C_STARTUP)
 
   -------         MODULE        MAIN
   C:0000H         SYMBOL        _ICE_DUMMY_
+  C:088CH         PUBLIC        initializeCTimer
   D:0008H         PUBLIC        valueSerial
-  C:08E8H         PUBLIC        setupInterrupt
-  D:00A8H         PUBLIC        IEN0
-  D:009AH         PUBLIC        IEN2
-  C:08D3H         PUBLIC        main
-  C:08BBH         PUBLIC        intSerial
+  B:00D8H.7       PUBLIC        BD
+  D:00D3H         PUBLIC        CMH0
+  D:00D5H         PUBLIC        CMH1
+  D:00D7H         PUBLIC        CMH2
+  D:00E3H         PUBLIC        CMH3
+  D:00E5H         PUBLIC        CMH4
+  D:00D2H         PUBLIC        CML0
+  D:00E7H         PUBLIC        CMH5
+  D:00D4H         PUBLIC        CML1
+  D:00F3H         PUBLIC        CMH6
+  D:00D6H         PUBLIC        CML2
+  D:00F5H         PUBLIC        CMH7
+  D:00E2H         PUBLIC        CML3
+  D:00E4H         PUBLIC        CML4
+  D:00E6H         PUBLIC        CML5
+  D:00F2H         PUBLIC        CML6
+  D:00F4H         PUBLIC        CML7
+BL51 BANKED LINKER/LOCATER V6.22.2.0                                                  05/02/2022  15:15:38  PAGE 3
+
+
+  C:08F0H         PUBLIC        initializeSerial
+  D:00F6H         PUBLIC        CMEN
+  C:0913H         PUBLIC        main
+  D:00BAH         PUBLIC        S0RELH
+  D:00AAH         PUBLIC        S0RELL
   D:0089H         PUBLIC        TMOD
-  C:08DEH         PUBLIC        initialize
-  C:088CH         PUBLIC        interruptCompare
-  D:00D2H         PUBLIC        CM0
   D:00DFH         PUBLIC        CTRELH
+  B:00A8H.4       PUBLIC        ES0
   D:00DEH         PUBLIC        CTRELL
   B:0098H.0       PUBLIC        RI0
   D:0009H         PUBLIC        luTable
-BL51 BANKED LINKER/LOCATER V6.22.2.0                                                  04/18/2022  14:33:47  PAGE 3
-
-
+  B:00A8H.7       PUBLIC        EAL
+  C:08C4H         PUBLIC        interruptSerial
   D:0099H         PUBLIC        S0BUF
   D:0098H         PUBLIC        S0CON
   D:00F7H         PUBLIC        CMSEL
   D:00E1H         PUBLIC        CTCON
-  C:08AEH         PUBLIC        setupCTimer
-  -------         PROC          INITIALIZE
-  C:08DEH         LINE#         11
-  C:08DEH         LINE#         12
-  C:08E1H         LINE#         13
-  C:08E4H         LINE#         14
-  C:08E7H         LINE#         15
-  -------         ENDPROC       INITIALIZE
-  -------         PROC          INTSERIAL
-  C:08BBH         LINE#         17
-  C:08BBH         LINE#         18
-  C:08BEH         LINE#         19
-  C:08C1H         LINE#         20
-  C:08C3H         LINE#         21
-  C:08C6H         LINE#         23
-  -------         ENDPROC       INTSERIAL
-  -------         PROC          SETUPINTERRUPT
-  C:08E8H         LINE#         25
-  C:08E8H         LINE#         26
-  C:08EBH         LINE#         27
-  -------         ENDPROC       SETUPINTERRUPT
-  -------         PROC          SETUPCTIMER
-  C:08AEH         LINE#         29
-  C:08AEH         LINE#         30
-  C:08B1H         LINE#         31
-  C:08B4H         LINE#         32
-  C:08B7H         LINE#         33
-  C:08BAH         LINE#         34
-  -------         ENDPROC       SETUPCTIMER
-  -------         PROC          INTERRUPTCOMPARE
-  C:088CH         LINE#         36
-  C:0897H         LINE#         37
-  C:08A5H         LINE#         38
-  -------         ENDPROC       INTERRUPTCOMPARE
+  -------         PROC          INITIALIZESERIAL
+  C:08F0H         LINE#         12
+  C:08F0H         LINE#         13
+  C:08F3H         LINE#         14
+  C:08F6H         LINE#         15
+  C:08F8H         LINE#         16
+  C:08FBH         LINE#         17
+  C:0903H         LINE#         18
+  C:0905H         LINE#         19
+  -------         ENDPROC       INITIALIZESERIAL
+  -------         PROC          INITIALIZECTIMER
+  C:088CH         LINE#         21
+  C:088CH         LINE#         22
+  C:088FH         LINE#         23
+  C:0892H         LINE#         24
+  C:0895H         LINE#         25
+  C:0898H         LINE#         26
+  C:089BH         LINE#         27
+  C:08B3H         LINE#         28
+  C:08C3H         LINE#         29
+  -------         ENDPROC       INITIALIZECTIMER
+  -------         PROC          INTERRUPTSERIAL
+  C:08C4H         LINE#         31
+  C:08CDH         LINE#         32
+  C:08D3H         LINE#         33
+  C:08D5H         LINE#         34
+  C:08E9H         LINE#         35
+  -------         ENDPROC       INTERRUPTSERIAL
   -------         PROC          MAIN
-  C:08D3H         LINE#         41
-  C:08D3H         LINE#         43
-  C:08D6H         LINE#         44
-  C:08D9H         LINE#         45
-  C:08DCH         LINE#         47
-  C:08DCH         LINE#         48
+  C:0913H         LINE#         37
+  C:0913H         LINE#         38
+  C:0916H         LINE#         39
+  C:0919H         LINE#         40
+  C:091BH         LINE#         41
+  C:091BH         LINE#         42
   -------         ENDPROC       MAIN
   -------         ENDMOD        MAIN
 
 ******************************************************************************
-* RESTRICTED VERSION WITH 0800H BYTE CODE SIZE LIMIT; USED: 0074H BYTE ( 5%) *
+* RESTRICTED VERSION WITH 0800H BYTE CODE SIZE LIMIT; USED: 00A2H BYTE ( 7%) *
+BL51 BANKED LINKER/LOCATER V6.22.2.0                                                  05/02/2022  15:15:38  PAGE 4
+
+
 ******************************************************************************
 
-Program Size: data=19.0 xdata=0 code=245
+Program Size: data=20.0 xdata=0 code=291
 LINK/LOCATE RUN COMPLETE.  0 WARNING(S),  0 ERROR(S)

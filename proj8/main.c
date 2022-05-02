@@ -2,49 +2,41 @@
 
 char valueSerial;
 
-char luTable[] = 
+unsigned char luTable[] = 
 {
-  0x00, 0x30, 0x60, 0x90, 0xB0, 0xD0, 0xE0, 0xF0, 0xFF 
+  0xFF, 0xE0, 0xD0, 0xC0, 0xB0, 0xA0, 0x90, 0x60, 0x30, 0x00
 };
 
 
-void initialize(){	// Using UART 1
+void initializeSerial(){	// Using UART 1
+  S0RELH = 0x03;
+  S0RELL = 0xD9;
+  BD = 1;
 	S0CON |= 0x50;
-	TMOD  = 0x20;
-	IEN0  = 0x98;	
+	TMOD  = (TMOD&0x0F) | 0x20;
+	ES0 = 1;	
 }
 
-void intSerial (void) interrupt 4{
-	IEN0 = 0x00;
-	valueSerial = S0BUF;
-	RI0 = 0;
-	IEN0 = 0x98;
-	
-}
-
-void setupInterrupt(){
-	IEN2 |= 0x98;
-}
-
-void setupCTimer(){
-	CTCON |= 0x08;
-	CTRELH = 0x0FF;
+void initializeCTimer(){
+  CTCON = CTCON&0xF8;
+  CTRELH = 0x0FF;
 	CTRELL = 0x00;
-	CMSEL |= 0x01;
+  CMEN = 0xFF;
+	CMSEL = 0xFF;
+  CMH0 = CMH1 = CMH2 = CMH3 = CMH4 = CMH5 = CMH6 = CMH7 = 0xFF;
+  CML0 = CML1 = CML2 = CML3 = CML4 = CML5 = CML6 = CML7 = 0x00;
 }
 
-void interruptCompare (void) interrupt 19{
-	CM0 = luTable[valueSerial];
+void interruptSerial (void) interrupt 4{
+	valueSerial = S0BUF - '0';
+	RI0 = 0;
+  CML0 = CML1 = CML2 = CML3 = CML4 = CML5 = CML6 = CML7 = luTable[valueSerial];
 }
-	
 
 int main(){
-	
-	initialize();
-	setupInterrupt();
-	setupCTimer();
-	
+	initializeSerial();
+  initializeCTimer();
+	EAL = 1;
 	while(1){
 	}
-	
 }
