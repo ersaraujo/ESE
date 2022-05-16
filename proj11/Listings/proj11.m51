@@ -1,4 +1,4 @@
-BL51 BANKED LINKER/LOCATER V6.22.2.0                                                    05/09/2022  15:00:57  PAGE 1
+BL51 BANKED LINKER/LOCATER V6.22.2.0                                                    05/16/2022  10:53:04  PAGE 1
 
 
 BL51 BANKED LINKER/LOCATER V6.22.2.0, INVOKED BY:
@@ -23,26 +23,24 @@ LINK MAP OF MODULE:  .\Objects\proj11 (?C_STARTUP)
 
             * * * * * * *   D A T A   M E M O R Y   * * * * * * *
             REG     0000H     0008H     ABSOLUTE     "REG BANK 0"
-                    0008H     0018H                  *** GAP ***
+            DATA    0008H     0012H     UNIT         ?DT?MAIN
+                    001AH     0006H                  *** GAP ***
             BIT     0020H.0   0000H.1   UNIT         ?BI?MAIN
                     0020H.1   0000H.7                *** GAP ***
-            DATA    0021H     002AH     UNIT         ?DT?MAIN
-            IDATA   004BH     0001H     UNIT         ?STACK
+            IDATA   0021H     0001H     UNIT         ?STACK
 
             * * * * * * *   C O D E   M E M O R Y   * * * * * * *
             CODE    0000H     0003H     ABSOLUTE     
                     0003H     0008H                  *** GAP ***
             CODE    000BH     0003H     ABSOLUTE     
                     000EH     07F2H                  *** GAP ***
-            CODE    0800H     008CH     UNIT         ?C_C51STARTUP
-            CODE    088CH     0058H     UNIT         ?PR?SCAN?MAIN
-            CODE    08E4H     003AH     UNIT         ?PR?PRINTSERIAL?MAIN
-            CODE    091EH     0032H     UNIT         ?PR?_VERIFICATECLA?MAIN
-            CODE    0950H     001DH     UNIT         ?PR?TIMERINTERRUPTION?MAIN
-            CODE    096DH     001AH     UNIT         ?C_INITSEG
-            CODE    0987H     0016H     UNIT         ?PR?INITIALIZESERIAL?MAIN
-            CODE    099DH     0015H     UNIT         ?PR?TIMERINIT?MAIN
-            CODE    09B2H     0010H     UNIT         ?PR?MAIN?MAIN
+            CODE    0800H     00E0H     UNIT         ?PR?ISR_TIMER0?MAIN
+            CODE    08E0H     008CH     UNIT         ?C_C51STARTUP
+            CODE    096CH     001DH     UNIT         ?C_INITSEG
+            CODE    0989H     0016H     UNIT         ?PR?INITIALIZESERIAL?MAIN
+            CODE    099FH     0015H     UNIT         ?PR?TIMERINIT?MAIN
+            CODE    09B4H     0014H     UNIT         ?PR?_WRITESERIAL?MAIN
+            CODE    09C8H     0011H     UNIT         ?PR?MAIN?MAIN
 
 
 
@@ -58,15 +56,10 @@ SEGMENT
 
 ?PR?MAIN?MAIN
   +--> ?PR?TIMERINIT?MAIN
-  +--> ?PR?INITIALIZESERIAL?MAIN
-BL51 BANKED LINKER/LOCATER V6.22.2.0                                                  05/09/2022  15:00:57  PAGE 2
+  +--> ?PR?_WRITESERIAL?MAIN
 
 
-  +--> ?PR?SCAN?MAIN
-  +--> ?PR?PRINTSERIAL?MAIN
-
-?PR?SCAN?MAIN
-  +--> ?PR?_VERIFICATECLA?MAIN
+BL51 BANKED LINKER/LOCATER V6.22.2.0                                                  05/16/2022  10:53:04  PAGE 2
 
 
 
@@ -76,8 +69,8 @@ SYMBOL TABLE OF MODULE:  .\Objects\proj11 (?C_STARTUP)
   ----------------------------------
 
   -------         MODULE        ?C_STARTUP
-  C:0800H         SEGMENT       ?C_C51STARTUP
-  I:004BH         SEGMENT       ?STACK
+  C:08E0H         SEGMENT       ?C_C51STARTUP
+  I:0021H         SEGMENT       ?STACK
   C:0000H         PUBLIC        ?C_STARTUP
   D:00E0H         SYMBOL        ACC
   D:00F0H         SYMBOL        B
@@ -86,7 +79,7 @@ SYMBOL TABLE OF MODULE:  .\Objects\proj11 (?C_STARTUP)
   N:0000H         SYMBOL        IBPSTACK
   N:0100H         SYMBOL        IBPSTACKTOP
   N:0080H         SYMBOL        IDATALEN
-  C:0803H         SYMBOL        IDATALOOP
+  C:08E3H         SYMBOL        IDATALOOP
   N:0000H         SYMBOL        PBPSTACK
   N:0100H         SYMBOL        PBPSTACKTOP
   N:0000H         SYMBOL        PDATALEN
@@ -95,171 +88,154 @@ SYMBOL TABLE OF MODULE:  .\Objects\proj11 (?C_STARTUP)
   N:0000H         SYMBOL        PPAGEENABLE
   D:00A0H         SYMBOL        PPAGE_SFR
   D:0081H         SYMBOL        SP
-  C:0800H         SYMBOL        STARTUP1
+  C:08E0H         SYMBOL        STARTUP1
   N:0000H         SYMBOL        XBPSTACK
   N:0000H         SYMBOL        XBPSTACKTOP
   N:0000H         SYMBOL        XDATALEN
   N:0000H         SYMBOL        XDATASTART
   C:0000H         LINE#         126
-  C:0800H         LINE#         133
-  C:0802H         LINE#         134
-  C:0803H         LINE#         135
-  C:0804H         LINE#         136
-  C:0806H         LINE#         185
-  C:0809H         LINE#         196
+  C:08E0H         LINE#         133
+  C:08E2H         LINE#         134
+  C:08E3H         LINE#         135
+  C:08E4H         LINE#         136
+  C:08E6H         LINE#         185
+  C:08E9H         LINE#         196
   -------         ENDMOD        ?C_STARTUP
 
   -------         MODULE        MAIN
   C:0000H         SYMBOL        _ICE_DUMMY_
-  D:0022H         PUBLIC        stable
+  D:0008H         PUBLIC        estado
+  C:0800H         PUBLIC        isr_timer0
   D:00F8H         PUBLIC        P5
   B:00D8H.7       PUBLIC        BD
-  C:08E4H         PUBLIC        printSerial
+  D:0009H         SYMBOL        contador_debounce
+  C:09B4H         PUBLIC        _writeSerial
   B:00D0H.7       PUBLIC        CY
-  C:0987H         PUBLIC        initializeSerial
-  C:09B2H         PUBLIC        main
-  C:088CH         PUBLIC        scan
-BL51 BANKED LINKER/LOCATER V6.22.2.0                                                  05/09/2022  15:00:57  PAGE 3
-
-
+  C:0989H         PUBLIC        initializeSerial
+  D:000AH         SYMBOL        bit_de_varredura
+  C:09C8H         PUBLIC        main
   D:00BAH         PUBLIC        S0RELH
+  B:0020H.0       PUBLIC        teclaApertada
   D:00AAH         PUBLIC        S0RELL
   D:0089H         PUBLIC        TMOD
-  C:091EH         PUBLIC        _verificaTecla
-  C:099DH         PUBLIC        timerInit
-  D:002EH         PUBLIC        keys
-  C:0950H         PUBLIC        timerInterruption
+  C:099FH         PUBLIC        timerInit
+BL51 BANKED LINKER/LOCATER V6.22.2.0                                                  05/16/2022  10:53:04  PAGE 3
+
+
+  D:000BH         PUBLIC        keys
   B:00A8H.4       PUBLIC        ES0
   B:00A8H.1       PUBLIC        ET0
   D:008CH         PUBLIC        TH0
   B:0098H.1       PUBLIC        TI0
+  D:0017H         SYMBOL        cl
   D:008AH         PUBLIC        TL0
   B:00A8H.7       PUBLIC        EAL
-  B:0020H.0       PUBLIC        teclado_TeclaApertada
   B:0088H.4       PUBLIC        TR0
-  D:003AH         PUBLIC        row_value
+  D:0018H         SYMBOL        ln
   D:0099H         PUBLIC        S0BUF
-  D:003EH         PUBLIC        unstable
   D:0098H         PUBLIC        S0CON
-  D:004AH         SYMBOL        timerBoucing
-  -------         PROC          TIMERINIT
-  C:099DH         LINE#         36
-  C:099DH         LINE#         37
-  C:099FH         LINE#         38
-  C:09A7H         LINE#         39
-  C:09AAH         LINE#         40
-  C:09ADH         LINE#         41
-  C:09AFH         LINE#         42
-  C:09B1H         LINE#         43
-  -------         ENDPROC       TIMERINIT
+  D:0019H         SYMBOL        leitura
   -------         PROC          INITIALIZESERIAL
-  C:0987H         LINE#         45
-  C:0987H         LINE#         46
-  C:098AH         LINE#         47
-  C:098DH         LINE#         48
-  C:098FH         LINE#         49
-  C:0992H         LINE#         50
-  C:099AH         LINE#         51
-  C:099CH         LINE#         52
+  C:0989H         LINE#         35
+  C:0989H         LINE#         36
+  C:098CH         LINE#         37
+  C:098FH         LINE#         38
+  C:0991H         LINE#         39
+  C:0994H         LINE#         40
+  C:099CH         LINE#         41
+  C:099EH         LINE#         42
   -------         ENDPROC       INITIALIZESERIAL
-  -------         PROC          TIMERINTERRUPTION
-  C:0950H         LINE#         54
-  C:0954H         LINE#         55
-  C:0956H         LINE#         56
-  C:095CH         LINE#         57
-  C:0964H         LINE#         58
-  C:0966H         LINE#         59
-  C:0968H         LINE#         60
-  -------         ENDPROC       TIMERINTERRUPTION
-  -------         PROC          _VERIFICATECLA
-  D:0006H         SYMBOL        i
-  -------         DO            
-  D:0021H         SYMBOL        stateFunction
-  -------         ENDDO         
-  C:091EH         LINE#         62
-  C:091EH         LINE#         65
-  C:0926H         LINE#         66
-BL51 BANKED LINKER/LOCATER V6.22.2.0                                                  05/09/2022  15:00:57  PAGE 4
+  -------         PROC          TIMERINIT
+  C:099FH         LINE#         43
+  C:099FH         LINE#         44
+  C:09A1H         LINE#         45
+  C:09A9H         LINE#         46
+  C:09ACH         LINE#         47
+  C:09AFH         LINE#         48
+  C:09B1H         LINE#         49
+  C:09B3H         LINE#         50
+  -------         ENDPROC       TIMERINIT
+  -------         PROC          ISR_TIMER0
+  C:0800H         LINE#         52
+  C:080FH         LINE#         53
+  C:0811H         LINE#         54
+  C:0817H         LINE#         55
+  C:081AH         LINE#         56
+  C:081CH         LINE#         58
+  C:0834H         LINE#         59
+  C:0834H         LINE#         60
+  C:0846H         LINE#         61
+  C:0862H         LINE#         62
+  C:0865H         LINE#         63
+  C:0868H         LINE#         64
+  C:086AH         LINE#         65
+  C:086DH         LINE#         66
+  C:086FH         LINE#         67
+  C:0871H         LINE#         68
+  C:0873H         LINE#         69
+  C:087EH         LINE#         70
+  C:0881H         LINE#         71
+  C:0881H         LINE#         72
+  C:088CH         LINE#         73
+  C:088FH         LINE#         74
+  C:088FH         LINE#         75
+BL51 BANKED LINKER/LOCATER V6.22.2.0                                                  05/16/2022  10:53:04  PAGE 4
 
 
-  C:0926H         LINE#         67
-  C:0931H         LINE#         68
-  C:0934H         LINE#         69
-  C:0934H         LINE#         70
-  C:0937H         LINE#         71
-  C:093AH         LINE#         72
-  C:093BH         LINE#         73
-  C:093BH         LINE#         74
-  C:0942H         LINE#         75
-  C:0944H         LINE#         76
-  C:0946H         LINE#         77
-  C:0948H         LINE#         78
-  C:0948H         LINE#         79
-  C:094BH         LINE#         80
-  C:094CH         LINE#         81
-  C:094CH         LINE#         82
-  C:094FH         LINE#         83
-  C:094FH         LINE#         84
-  C:094FH         LINE#         85
-  -------         ENDPROC       _VERIFICATECLA
-  -------         PROC          SCAN
-  -------         DO            
-  D:0002H         SYMBOL        i
-  D:0082H         SYMBOL        j
-  -------         ENDDO         
-  C:088CH         LINE#         87
-  C:088CH         LINE#         89
-  C:088FH         LINE#         90
-  C:0892H         LINE#         91
-  C:0899H         LINE#         92
-  C:089CH         LINE#         93
-  C:08B6H         LINE#         94
-  C:08B9H         LINE#         95
-  C:08C7H         LINE#         96
-  C:08C9H         LINE#         97
-  C:08CBH         LINE#         98
-  C:08CDH         LINE#         99
-  C:08CDH         LINE#         100
-  C:08CDH         LINE#         101
-  C:08CFH         LINE#         102
-  C:08D8H         LINE#         103
-  C:08E3H         LINE#         104
-  -------         ENDPROC       SCAN
-  -------         PROC          PRINTSERIAL
-  -------         DO            
-  D:0006H         SYMBOL        i
-  D:0004H         SYMBOL        j
-  -------         ENDDO         
-  C:08E4H         LINE#         106
-  C:08E4H         LINE#         108
-  C:08E7H         LINE#         109
-  C:08EAH         LINE#         110
-  C:08F6H         LINE#         111
-  C:0902H         LINE#         112
-  C:0905H         LINE#         113
-  C:0907H         LINE#         114
-  C:0907H         LINE#         115
-BL51 BANKED LINKER/LOCATER V6.22.2.0                                                  05/09/2022  15:00:57  PAGE 5
-
-
-  C:0912H         LINE#         116
-  C:091DH         LINE#         117
-  -------         ENDPROC       PRINTSERIAL
+  C:088FH         LINE#         76
+  C:0891H         LINE#         77
+  C:0891H         LINE#         78
+  C:0893H         LINE#         79
+  C:08A1H         LINE#         80
+  C:08A4H         LINE#         81
+  C:08A7H         LINE#         82
+  C:08A7H         LINE#         83
+  C:08A9H         LINE#         84
+  C:08A9H         LINE#         85
+  C:08ACH         LINE#         86
+  C:08B8H         LINE#         87
+  C:08BBH         LINE#         88
+  C:08BBH         LINE#         89
+  C:08BDH         LINE#         90
+  C:08BDH         LINE#         91
+  C:08CBH         LINE#         92
+  C:08CEH         LINE#         93
+  C:08CEH         LINE#         94
+  C:08CEH         LINE#         95
+  C:08D0H         LINE#         96
+  C:08D0H         LINE#         97
+  C:08D3H         LINE#         98
+  C:08D3H         LINE#         99
+  C:08D3H         LINE#         100
+  -------         ENDPROC       ISR_TIMER0
+  -------         PROC          _WRITESERIAL
+  D:0007H         SYMBOL        i
+  D:0005H         SYMBOL        j
+  C:09B4H         LINE#         102
+  C:09B4H         LINE#         103
+  C:09C0H         LINE#         104
+  C:09C3H         LINE#         105
+  C:09C5H         LINE#         106
+  C:09C7H         LINE#         107
+  -------         ENDPROC       _WRITESERIAL
   -------         PROC          MAIN
-  C:09B2H         LINE#         119
-  C:09B2H         LINE#         120
-  C:09B5H         LINE#         121
-  C:09B8H         LINE#         122
-  C:09BAH         LINE#         123
-  C:09BAH         LINE#         124
-  C:09BDH         LINE#         125
-  C:09C0H         LINE#         126
+  C:09C8H         LINE#         109
+  C:09C8H         LINE#         110
+  C:09CBH         LINE#         111
+  C:09CDH         LINE#         112
+  C:09CDH         LINE#         113
+  C:09D0H         LINE#         114
+  C:09D7H         LINE#         115
+  C:09D7H         LINE#         116
   -------         ENDPROC       MAIN
   -------         ENDMOD        MAIN
 
+*** WARNING L16: UNCALLED SEGMENT, IGNORED FOR OVERLAY PROCESS
+    SEGMENT: ?PR?INITIALIZESERIAL?MAIN
+
 ******************************************************************************
-* RESTRICTED VERSION WITH 0800H BYTE CODE SIZE LIMIT; USED: 0147H BYTE (15%) *
+* RESTRICTED VERSION WITH 0800H BYTE CODE SIZE LIMIT; USED: 015EH BYTE (17%) *
 ******************************************************************************
 
-Program Size: data=51.1 xdata=0 code=456
-LINK/LOCATE RUN COMPLETE.  0 WARNING(S),  0 ERROR(S)
+Program Size: data=27.1 xdata=0 code=479
+LINK/LOCATE RUN COMPLETE.  1 WARNING(S),  0 ERROR(S)

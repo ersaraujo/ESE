@@ -1,4 +1,4 @@
-C51 COMPILER V9.60.0.0   MAIN                                                              05/09/2022 15:00:57 PAGE 1   
+C51 COMPILER V9.60.0.0   MAIN                                                              05/16/2022 10:53:04 PAGE 1   
 
 
 C51 COMPILER V9.60.0.0, COMPILATION OF MODULE MAIN
@@ -12,141 +12,131 @@ line level    source
    2          
    3          #define ROW_SIZE        4
    4          #define COL_SIZE        3
-   5          #define CORRECAO        0
+   5          #define CORRECAO    0
    6          #define BOUCING_TIME    4
    7          
-   8          #define FREQ_TIMER      100
-   9          #define FREQ_CLK        12000000
+   8          #define FREQ_TIMER      200
+   9          #define FREQ_CLK      12000000
   10          
   11          #define TH0_INICIAL ((65536-(FREQ_CLK/(12*FREQ_TIMER)) + CORRECAO)>>8)
   12          #define TL0_INICIAL ((65536-(FREQ_CLK/(12*FREQ_TIMER)) + CORRECAO)&0xFF)
   13          
-  14          bit  teclado_TeclaApertada = 0;
-  15          
-  16          static unsigned char timerBoucing = 0;
-  17          
-  18          typedef enum{
-  19            INIT,
-  20            CHECKBIT,
-  21            BOUCING,
-  22            RESET,
-  23          }estados;
-  24          
-  25          const char row_value[ROW_SIZE] = {0x0E, 0x0D, 0x0B, 0x7};
-  26          unsigned char stable[ROW_SIZE][COL_SIZE];
-  27          unsigned char unstable[ROW_SIZE][COL_SIZE];
-  28          
-  29          const char keys[ROW_SIZE][COL_SIZE] = {
-  30            {'1','2','3'},
-  31            {'4','5','6'},
-  32            {'7','8','9'},
-  33            {'*','0','#'}
-  34          };
-  35          
-  36          void timerInit(){
-  37   1        TR0 = 0;                              
-  38   1        TMOD = (TMOD & 0xF0)|0x01;
-  39   1        TH0 = TH0_INICIAL;          
-  40   1        TL0 = TL0_INICIAL;
-  41   1        ET0 = 1; 
-  42   1        TR0 = 1;            
-  43   1      }
-  44          
-  45          void initializeSerial(){
-  46   1        S0RELH = 0x03;
-  47   1        S0RELL = 0xD9;
-  48   1        BD = 1;
-  49   1        S0CON |= 0x50;
-  50   1        TMOD  = (TMOD&0x0F) | 0x20;
-  51   1        ES0 = 1;  
-  52   1      }
-  53          
-  54          void timerInterruption (void) interrupt 1 using 2{
-C51 COMPILER V9.60.0.0   MAIN                                                              05/09/2022 15:00:57 PAGE 2   
+  14          typedef enum{
+  15            NTTA = 0,
+  16            WAITING_1,
+  17            TTA,
+  18            WAITING_2,
+  19          }estados;
+  20          
+  21          const unsigned char keys[ROW_SIZE][COL_SIZE] = {
+  22            {'1','2','3'},
+  23            {'4','5','6'},
+  24            {'7','8','9'},
+  25            {'*','0','#'}
+  26          };
+  27          
+  28          static unsigned char ln, cl;
+  29          static estados estado = 0;
+  30          static unsigned char contador_debounce = 0;
+  31          static unsigned char bit_de_varredura = 0;
+  32          static unsigned char leitura = 0;
+  33          bit teclaApertada = 0;
+  34          
+  35          void initializeSerial(){  // Using UART 1
+  36   1        S0RELH = 0x03;
+  37   1        S0RELL = 0xD9;
+  38   1        BD = 1;
+  39   1        S0CON |= 0x50;
+  40   1        TMOD  = (TMOD&0x0F) | 0x20;
+  41   1        ES0 = 1;  
+  42   1      }
+  43          void timerInit(){
+  44   1        TR0 = 0;                                // Para o timer
+  45   1        TMOD = (TMOD & 0xF0)|0x01;              //Define modo
+  46   1        TH0 = TH0_INICIAL;                      // Define valores iniciais para os registradores TH0 e TL0
+  47   1        TL0 = TL0_INICIAL;
+  48   1        ET0 = 1;                                // Habilita interrupcao do timer 0
+  49   1        TR0 = 1;                                // Ativa o timer
+  50   1      }
+  51          
+  52          void isr_timer0 (void) interrupt 1 {
+  53   1        TR0 = 0;
+  54   1        TH0 = TH0_INICIAL + (unsigned char) CY;
+C51 COMPILER V9.60.0.0   MAIN                                                              05/16/2022 10:53:04 PAGE 2   
 
-  55   1        TR0 = 0;                                
-  56   1        TL0 += TL0_INICIAL;
-  57   1        TH0 += TH0_INICIAL + (unsigned char) CY;
-  58   1        TR0 = 1;                                                      
-  59   1        timerBoucing++;                     
-  60   1      }
-  61          
-  62          void verificaTecla(int i){
-  63   1        static estados stateFunction;
-  64   1        
-  65   1        switch(stateFunction){
-  66   2          case BOUCING:                         
-  67   2            if(timerBoucing < BOUCING_TIME){
-  68   3              stateFunction = BOUCING;
-  69   3            }
-  70   2            stateFunction = CHECKBIT;
-  71   2            timerBoucing = 0;
-  72   2            break;
-  73   2          case CHECKBIT:
-  74   2            if(P5^i){
-  75   3              teclado_TeclaApertada = 1;
-  76   3            }else{
-  77   3              teclado_TeclaApertada = 0;
-  78   3            }
-  79   2            stateFunction = RESET;
-  80   2            break;
-  81   2          default:    
-  82   2            stateFunction = BOUCING;          
-  83   2            break;
-  84   2        }
-  85   1      }
-  86          
-  87          void scan(){
-  88   1        int i, j;
-  89   1        P5 |= 0x0F;
-  90   1        for(i = 0; i < ROW_SIZE; ++i){
-  91   2          P5 |= row_value[i-1];
-  92   2          for(j = 0; j < COL_SIZE; ++j){
-  93   3            if(P5^(j+4) == 1){
-  94   4              verificaTecla(j+4);     
-  95   4              if(teclado_TeclaApertada){
-  96   5                stable[i-1][j-1] = 1;
-  97   5              }else{
-  98   5                stable[i-1][j-1] = 0;
-  99   5              }
- 100   4            }
- 101   3            teclado_TeclaApertada = 0;
- 102   3          }
- 103   2        }
- 104   1      }
- 105          
- 106          void printSerial(){
- 107   1        int i, j;
- 108   1        for(i = 0; i < ROW_SIZE; i++){
- 109   2          for(j = 0; j < COL_SIZE; j++){
- 110   3            if(stable[i][j]){
- 111   4              S0BUF = keys[i-1][j-1];
- 112   4              while(!TI0);
- 113   4              TI0 = 0;
- 114   4            }
- 115   3          }
- 116   2        } 
-C51 COMPILER V9.60.0.0   MAIN                                                              05/09/2022 15:00:57 PAGE 3   
+  55   1        TL0 = TL0_INICIAL;
+  56   1        TR0 = 1;
+  57   1        
+  58   1        switch(estado){
+  59   2          case NTTA: 
+  60   2              P5 = ~(1 << (bit_de_varredura & 0x03));
+  61   2              if(!(P5&(1<<leitura+4))){
+  62   3                ln = leitura;
+  63   3                cl = bit_de_varredura;
+  64   3                teclaApertada = 1;
+  65   3                estado = WAITING_1;
+  66   3              }else{
+  67   3                bit_de_varredura++;
+  68   3                leitura++;   
+  69   3                if(bit_de_varredura > 3){
+  70   4                  bit_de_varredura = 0;
+  71   4                }
+  72   3                if(leitura > 2){
+  73   4                  leitura = 0;
+  74   4                }
+  75   3              }
+  76   2              break;
+  77   2          case WAITING_1:
+  78   2              teclaApertada = 0;
+  79   2              if (contador_debounce++ > 3){
+  80   3                contador_debounce = 0;
+  81   3                estado = TTA;
+  82   3              }
+  83   2              break;
+  84   2          case TTA: 
+  85   2              P5 = 0xF0;
+  86   2              if (P5 >= 0xF0){
+  87   3                estado = WAITING_2;
+  88   3              }
+  89   2              break;
+  90   2          case WAITING_2:
+  91   2              if (contador_debounce++ > 3){
+  92   3                contador_debounce = 0;
+  93   3                estado = NTTA;
+  94   3              }
+  95   2              break;
+  96   2          default:
+  97   2              estado = NTTA;
+  98   2              break;
+  99   2          }
+ 100   1      }
+ 101          
+ 102          void writeSerial(char i, char j){
+ 103   1          S0BUF = keys[i][j];
+ 104   1          while(!TI0);
+ 105   1          TI0 = 0;
+ 106   1          teclaApertada = 0;
+ 107   1      }
+ 108          
+ 109          int main(){
+ 110   1          timerInit();
+ 111   1          EAL = 1;
+ 112   1          while(1){
+ 113   2              if(teclaApertada){
+ 114   3                  writeSerial(ln, cl);
+ 115   3              }
+ 116   2          }
+C51 COMPILER V9.60.0.0   MAIN                                                              05/16/2022 10:53:04 PAGE 3   
 
  117   1      }
- 118          
- 119          int main(){
- 120   1        timerInit();
- 121   1        initializeSerial();
- 122   1        EAL = 1;
- 123   1        while(1){
- 124   2          scan();
- 125   2          printSerial();
- 126   2        }
- 127   1      }
 
 
 MODULE INFORMATION:   STATIC OVERLAYABLE
-   CODE SIZE        =    284    ----
+   CODE SIZE        =    304    ----
    CONSTANT SIZE    =   ----    ----
    XDATA SIZE       =   ----    ----
    PDATA SIZE       =   ----    ----
-   DATA SIZE        =     42    ----
+   DATA SIZE        =     18    ----
    IDATA SIZE       =   ----    ----
    BIT SIZE         =      1    ----
 END OF MODULE INFORMATION.

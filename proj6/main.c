@@ -13,14 +13,14 @@ void configSerial(){
 	TMOD 	= 0x20;   	// Define modo1 do Timer         
 	TH1   = 0x2580;   // Define boudrate
 	TR1   = 1;   			// Inicia o Timer1 
-	IEN0 		= 0x90;			// Ativa interrupção
+	IEN0 		= 0x90;			// Ativa interrupï¿½ï¿½o
 }
 	
 // Funcao para escrever na UART
 void writeSerial(unsigned char letra){
 	S0BUF = letra;			
-	while(!TI0);						// Aguarda transmissão
-	TI0 = 0;								// Sinaliza final da transmissão
+	while(!TI0);						// Aguarda transmissï¿½o
+	TI0 = 0;								// Sinaliza final da transmissï¿½o
 	out++;
 }
 	
@@ -29,25 +29,25 @@ void intSerial (void) interrupt 4{
 	char inputSerial;
 	inputSerial = S0BUF;
 	
-	IEN0 = 0x00;												// Desativa a interrupção
+	IEN0 = 0x00;												// Desativa a interrupï¿½ï¿½o
 	
-	if(in == out || (!(in+1 < out))){	// Verifica se é possivel escrever no buffer
+	if(in == out || (!(in+1 < out))){	// Verifica se ï¿½ possivel escrever no buffer
 		rxBuffer[in] = inputSerial;			// Salva a entrada no rxBuffer
-		if(inputSerial == '$'){					// Verifica se é o fim da string
+		if(inputSerial == '$'){					// Verifica se ï¿½ o fim da string
 			recebeuString = 1;
 		}
-		if(in < 15){										// Verifica o espaço no rxBuffer
+		if(in < 15){										// Verifica o espaï¿½o no rxBuffer
 			in++;														
 		}else{
 			in = 0;
 		}
 	}
 	
-	RI0 = 0;														// Sinaliza final de recepção
-	IEN0 = 0x90;												// Ativa interrupçao novamente
+	RI0 = 0;														// Sinaliza final de recepï¿½ï¿½o
+	IEN0 = 0x90;												// Ativa interrupï¿½ao novamente
 
 }
-/* Mudar verificação para ver se in < out, caso seja, uma nova escrita foi feita */
+/* Mudar verificaï¿½ï¿½o para ver se in < out, caso seja, uma nova escrita foi feita */
 void sendChar(char c){
 	if(indexTx < 16){										// Verifica a escrita na UART
 		txBuffer[indexTx] = c;						// Coloca c em txBuffer
@@ -56,7 +56,7 @@ void sendChar(char c){
 	}
 }
 
-void resetVar(){			// Função que reseta variaveis utilizadas depois da rotina de print
+void resetVar(){			// Funï¿½ï¿½o que reseta variaveis utilizadas depois da rotina de print
 	out = 0;
 	in = 0;
 	indexTx = 0;
@@ -65,12 +65,12 @@ void resetVar(){			// Função que reseta variaveis utilizadas depois da rotina de
 
 void sendString(char *s){		// Envia string para ser printada
 	int i = 0;		
-	IEN0 = 0x00;								// Desativa a interrupção
-	while(s[i] != '$'){				// Verifica se é o final da string
+	IEN0 = 0x00;								// Desativa a interrupï¿½ï¿½o
+	while(s[i] != '$'){				// Verifica se ï¿½ o final da string
 		sendChar(s[i]);					// Chama rotina para printar o caractere
 		i++;
 	}
-	IEN0 = 0x90;								// Ativa a interrupção no final do print da string
+	IEN0 = 0x90;								// Ativa a interrupï¿½ï¿½o no final do print da string
 	resetVar();								// Rotina para reset das variaveis
 }
 
